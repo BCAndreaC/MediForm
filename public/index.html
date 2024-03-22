@@ -24,32 +24,32 @@
                 <div>
                     <form id="patientForm" method="post">
                         <label for="fullName">Nombre completo:</label>
-                        <input type="text" id="fullName" name="fullName" required>
+                        <input type="text" id="fullName" name="fullName" >
 
                         <label for="dateOfBirth">Fecha de nacimiento:</label>
-                        <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth" >
 
                         <label for="gender">Sexo:</label>
-                        <select id="gender" name="gender" required>
-                            <option value="">Seleccione sexo</option>
+                        <select id="gender" name="gender" >
+                            <option value="NO">Seleccione sexo</option>
                             <option value="HOMBRE">Hombre</option>
                             <option value="MUJER">Mujer</option>
                         </select>
 
                         <label for="motive">Motivo de consulta:</label>
-                        <input type="text" id="motive" name="motive" required>
+                        <input type="text" id="motive" name="motive" >
 
                         <label for="temperature">Temperatura:</label>
-                        <input type="number" id="temperature" name="temperature" required>
+                        <input type="number" id="temperature" name="temperature" >
 
                         <label for="height">Estatura:</label>
-                        <input type="number" id="height" name="height" required>
+                        <input type="number" id="height" name="height" >
 
                         <label for="weight">Peso:</label>
-                        <input type="number" id="weight" name="weight" required>
+                        <input type="number" id="weight" name="weight" >
 
                         <label for="oxygen_sat">Saturación de oxigeno:</label>
-                        <input type="number" id="oxygen_sat" name="oxygen_sat" required>
+                        <input type="number" id="oxygen_sat" name="oxygen_sat" >
 
                         <button type="submit">Guardar</button>
                     </form>
@@ -59,12 +59,10 @@
                 <div>
                     <h3>Diagnosticos aplicables</h3>
                 </div>
-                <div>
-                    <label for="disease">Enfermedad:</label>
-                    <select id="disease" name="disease">
-                        <option value="seleccionar">Seleccionar</option>
-                        <option value="covid">Covid</option>
-                    </select>
+                <div class="diagnosis">
+                    <label for="disease">Buscar diagnostico:</label>
+                    <input type="text" id="disease" name="disease">
+                    <div id="suggestions" class="suggestionsContainer"></div>
                 </div>
             </article>
         </section>
