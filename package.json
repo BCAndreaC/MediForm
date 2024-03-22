@@ -1,0 +1,15 @@
+{
+  "name": "mediform",
+  "version": "1.0.0",
+  "description": "Formulario para registro de datos personales y antropométricos de un paciente.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andrea Cristina Bonilla Carreola",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "3.2.5"
+  }
+}
