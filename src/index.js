@@ -4,8 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchApi();
   
     let diagnoses = [];
-    
-    console.log(diagnoses);
   
     diagnosisInput.addEventListener("input", function () {
       const userInput = this.value.toLowerCase();
@@ -25,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
           suggestionElement.classList.add("suggestion-item");
           suggestionElement.textContent = suggestion.nombre;
           suggestionElement.addEventListener("click", function () {
-            diagnosisInput.value = suggestion;
+            diagnosisInput.value = suggestion.nombre;
             suggestionsContainer.innerHTML = "";
           });
           suggestionsContainer.appendChild(suggestionElement);
