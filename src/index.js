@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
     const diagnosisInput = document.getElementById("disease");
     const suggestionsContainer = document.getElementById("suggestions");
@@ -80,89 +81,68 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch((error) => console.error(error));
     }
   
-    //funcion para calcular la edad
+    //funcion para calcular la edad y nombrarla en horas, dias, meses y años
     function calculateAge(dateOfBirth) {
       const currentDate = new Date();
       const birthDate = new Date(dateOfBirth);
-      console.log(birthDate, 'Aqui esta la fecha de nacimiento');
-      let age = currentDate.getFullYear() - birthDate.getFullYear();
-      const month = currentDate.getMonth() - birthDate.getMonth();
-      if (
-        month < 0 ||
-        (month === 0 && currentDate.getDate() < birthDate.getDate())
-      ) {
-        age--;
-      }
-      console.log(age);
-      return age;
-    }
-  
-    function convertToYears(value, unit) {
-      if (unit === "H") {
-        return value / 8760; // 1 año tiene aproximadamente 8760 horas
-      } else if (unit === "D") {
-        return value / 365; // 1 año tiene aproximadamente 365 días
-      } else if (unit === "M") {
-        return value / 12; // 1 año tiene aproximadamente 12 meses
+      const ageInMilliseconds = currentDate - birthDate;
+      const ageInHours = ageInMilliseconds / (1000 * 60 * 60);
+      const ageInDays = ageInMilliseconds / (1000 * 60 * 60 * 24);
+      const ageInMonths = ageInMilliseconds / (1000 * 60 * 60 * 24 * 30.44); // Aproximadamente 30.44 días en un mes
+      const ageInYears = ageInMilliseconds / (1000 * 60 * 60 * 24 * 365.25); // Aproximadamente 365.25 días en un año para tener en cuenta años bisiestos
+      
+      if (ageInHours < 24) {
+          // Si la edad es menor a un día, calcular la edad en horas
+          const age = Math.floor(ageInHours);
+          const nomenclature = String(age).padStart(3, '0') + 'H';
+          console.log('Nomenclatura:', nomenclature);
+          return nomenclature;
+      } else if (ageInDays < 30) {
+          // Si la edad es menor a un mes, calcular la edad en días
+          const age = Math.floor(ageInDays);
+          const nomenclature = String(age).padStart(3, '0') + 'D';
+          console.log('Edad:', nomenclature);
+          return nomenclature;
+      } else if (ageInYears < 1) {
+          // Si la edad es menor a un año, calcular la edad en meses
+          const age = Math.floor(ageInMonths);
+          const nomenclature = String(age).padStart(3, '0') + 'M';
+          console.log('Edad:', nomenclature);
+          return nomenclature;
       } else {
-        return value; // La edad ya está en años
+          // Si la edad es mayor o igual a un año, calcular la edad en años
+          const age = Math.floor(ageInYears);
+          const nomenclature = String(age).padStart(3, '0') + 'A';
+          console.log('Edad:', nomenclature);
+          return nomenclature;
       }
-    }
+
+  }
+
   
-    // Función para verificar si la edad es superior al límite
-    function isAgeAboveLimit(age, limit) {
-      const ageInYears = parseInt(age.substring(0, age.length - 1)); // Extraer el valor numérico de la edad
-      const ageUnit = age.charAt(age.length - 1); // Obtener la unidad de la edad (H, D, M, A)
-  
-      const limitInYears = parseInt(limit.substring(0, limit.length - 1)); // Extraer el valor numérico del límite
-      const limitUnit = limit.charAt(limit.length - 1); // Obtener la unidad del límite (H, D, M, A)
-  
-      // Convertir la edad y el límite a años si no están en años
-      const ageInYearsConverted = convertToYears(ageInYears, ageUnit);
-      const limitInYearsConverted = convertToYears(limitInYears, limitUnit);
-  
-      // Verificar si la edad es mayor o igual al límite
-      return ageInYearsConverted >= limitInYearsConverted;
-    }
-  
-    // Función para verificar si la edad es inferior al límite
-    function isAgeBelowLimit(age, limit) {
-      const ageInYears = parseInt(age.substring(0, age.length - 1)); // Extraer el valor numérico de la edad
-      const ageUnit = age.charAt(age.length - 1); // Obtener la unidad de la edad (H, D, M, A)
-  
-      const limitInYears = parseInt(limit.substring(0, limit.length - 1)); // Extraer el valor numérico del límite
-      const limitUnit = limit.charAt(limit.length - 1); // Obtener la unidad del límite (H, D, M, A)
-  
-      // Convertir la edad y el límite a años si no están en años
-      const ageInYearsConverted = convertToYears(ageInYears, ageUnit);
-      const limitInYearsConverted = convertToYears(limitInYears, limitUnit);
-  
-      // Verificar si la edad es menor o igual al límite
-      return ageInYearsConverted <= limitInYearsConverted;
-    }
-  
-    //funcion para salcular limites de edad usando nomenclatura horas de nacido, dias de nacido, meses de nacido, años de nacido
-  
-    // Función para filtrar los diagnósticos
-    function filterDiagnoses(data, linf, lsup, lsex) {
+    // Función para filtrar los diagnósticos segun los criterios de edad y sexo
+    function filterDiagnoses(diagnoses, linf, lsup, lsex,birthDate, nomenclature) {
+      console.log(diagnoses, linf, lsup, lsex, birthDate, nomenclature);
       // Verificar si todos los criterios son "NO"
       if (linf === "NO" && lsup === "NO" && lsex === "NO") {
         // No se aplica ningún filtro, todos los diagnósticos están en la lista de resultados
-        return data;
+        return diagnoses;
       }
   
       // Aplicar filtro de edad
-      let filteredDiagnoses = data.filter((diagnosis) => {
+      let filteredDiagnoses = diagnoses.filter((diagnosis) => {
         if (linf !== "NO") {
-          const ageCriteriaMet = isAgeAboveLimit(diagnosis.age, linf);
-          if (!ageCriteriaMet) return false;
-        }
+          if (nomenclature >= linf) {
+            console.log(diagnosis.linf.String.padStart(nomenclature, '0'), 'Diagnosticos con linf');
+              return diagnosis.linf.String.padStart(nomenclature, '0');
+          }
+      }
   
-        if (lsup !== "NO") {
-          const ageCriteriaMet = isAgeBelowLimit(diagnosis.age, lsup);
-          if (!ageCriteriaMet) return false;
+      if (lsup !== "NO") {
+        if (nomenclature <= lsup) {
+            return true;
         }
-  
+    }
         // Si no hay criterios de edad, el diagnóstico pasa el filtro
         return true;
       });
