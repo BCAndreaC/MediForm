@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   
     function fetchApi() {
-      fetch("https://api.editandoideas.com/technical-test/cat__cie_sis.json")
+      fetch("https://api.editandoideas.com/technical-test/cat__cie_sis/")
         .then((response) => {
           if (!response.ok) {
             throw new Error("Error en la solicitud de la API");
@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function calculateAge(dateOfBirth) {
       const currentDate = new Date();
       const birthDate = new Date(dateOfBirth);
+      console.log(birthDate, 'Aqui esta la fecha de nacimiento');
       let age = currentDate.getFullYear() - birthDate.getFullYear();
       const month = currentDate.getMonth() - birthDate.getMonth();
       if (

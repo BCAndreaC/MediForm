@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediForm</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/isometric/50/nurse-female.png">
     <link rel="stylesheet" href="/src/styles.css">
 </head>
 
@@ -12,8 +13,7 @@
     <header>
         <h1>MediForm</h1>
         <h2>Dra. Borges</h2>
-        <img src="https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-            alt="profile picture" style="height: 75px;">
+        <img width="75" height="75" src="/public/img/doctor_image.png" alt="female-doctor--attending---child"/>
     </header>
     <main>
         <section>
@@ -27,7 +27,7 @@
                         <input type="text" id="fullName" name="fullName" >
 
                         <label for="dateOfBirth">Fecha de nacimiento:</label>
-                        <input type="date" id="dateOfBirth" name="dateOfBirth" >
+                        <input type="datetime-local" id="dateOfBirth" name="dateOfBirth" min="1904-01-01" max="2024-12-31">
 
                         <label for="gender">Sexo:</label>
                         <select id="gender" name="gender" >
@@ -68,6 +68,8 @@
         </section>
     </main>
     <script type="module" src="/src/index.js" ></script>
+    <footer>
+        Illustration by <a href="https://icons8.com/illustrations/author/zD2oqC8lLBBA">Icons 8</a> from <a href="https://icons8.com/illustrations">Ouch!</a>
+    </footer>
 </body>
-
 </html>
