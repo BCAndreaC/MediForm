@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
       weight: document.getElementById("weight").value,
       oxygen_sat: document.getElementById("oxygen_sat").value,
     };
-
+    console.log(patientData, "Datos del paciente");
     filterDiagnoses(patientData);
     diagnosisInput.addEventListener("input", async  function () {
       const userInput = this.value.toLowerCase();
