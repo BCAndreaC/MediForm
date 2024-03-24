@@ -13,7 +13,9 @@ La maquetación de la aplicación se realizó utilizando Figma. Puedes ver la ma
 
 [Ver maquetación en Figma]([HI - FI ](https://www.figma.com/file/Z3Xyxtb2ByAiR7EOozLZ9b/Editando_Ideas?type=design&node-id=0%3A1&mode=design&t=b6NqUCqP9o8r8FlL-1)) 
 
-![Imagen de la maquetación]() 
+![Hi-fi_mediForm](https://github.com/BCAndreaC/MediForm/assets/126895867/9a111b46-9a75-4ccf-848c-5f180f678d8a)
+
+Se itero la maquetacion para que los diagnosticos estuvieran solo disponibles despues de introducir la informacion del paciente, asi como tambien el resumen de la informacion del paciente. Buscando que la imagen sea homogenea desde celular hasta computadora y dar la misma experiencia de usuario sin importar la plataforma.
 
 ## Pagina web del proyecto
 
