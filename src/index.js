@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const containerDiagnoses = document.getElementById("containerDiagnoses");
   const articlePatientData = document.getElementById("patientArticle");
 
-  let diagnoses; // Declarar la variable diagnoses
+  let diagnoses;
 
   const form = document.getElementById("patientForm");
 
@@ -24,17 +24,17 @@ document.addEventListener("DOMContentLoaded", () => {
       weight: document.getElementById("weight").value,
       oxygen_sat: document.getElementById("oxygen_sat").value,
     };
-    console.log(patientData, "Datos del paciente");
+
     filterDiagnoses(patientData);
     diagnosisInput.addEventListener("input", async function () {
       const userInput = this.value.toLowerCase();
       const filteredDiagnoses = await filterDiagnoses(patientData);
 
-      const matchingDiagnoses = filteredDiagnoses
-      .filter((diagnosis) =>
-      diagnosis.nombre.toLowerCase().includes(userInput) || diagnosis.catalog_key.toLowerCase().includes(userInput),
-    );
-      console.log(displaySuggestions(matchingDiagnoses), "Sugerencias");
+      const matchingDiagnoses = filteredDiagnoses.filter(
+        (diagnosis) =>
+          diagnosis.nombre.toLowerCase().includes(userInput) ||
+          diagnosis.catalog_key.toLowerCase().includes(userInput),
+      );
       displaySuggestions(matchingDiagnoses);
     });
     displayPatientSummary(patientData);
@@ -83,7 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           numberOfSuggestions.textContent = `${suggestions.length} sugerencias`;
           suggestionElement.classList.add("suggestion-item");
-          suggestionElement.textContent = suggestion.catalog_key + "-" + suggestion.nombre ;
+          suggestionElement.textContent =
+            suggestion.catalog_key + "-" + suggestion.nombre;
           suggestionElement.addEventListener("click", function () {
             numberOfSuggestions.textContent = `${suggestions.length} sugerencias`;
             diagnosisInput.value = suggestion.nombre;
@@ -119,35 +120,25 @@ document.addEventListener("DOMContentLoaded", () => {
       const ageInYears = ageInMilliseconds / (1000 * 60 * 60 * 24 * 365.25); // Aproximadamente 365.25 días en un año para tener en cuenta años bisiestos
 
       if (ageInHours < 24) {
-        // Si la edad es menor a un día, calcular la edad en horas
         const age = Math.floor(ageInHours);
         const nomenclature = String(age).padStart(3, "0") + "H";
-        console.log(nomenclature);
         return nomenclature;
       } else if (ageInDays < 30) {
-        // Si la edad es menor a un mes, calcular la edad en días
         const age = Math.floor(ageInDays);
         const nomenclature = String(age).padStart(3, "0") + "D";
-        console.log(nomenclature);
         return nomenclature;
       } else if (ageInYears < 1) {
-        // Si la edad es menor a un año, calcular la edad en meses
         const age = Math.floor(ageInMonths);
         const nomenclature = String(age).padStart(3, "0") + "M";
-        console.log(nomenclature);
         return nomenclature;
       } else if (ageInYears >= 1) {
-        // Si la edad es mayor o igual a un año, calcular la edad en años
         const age = Math.floor(ageInYears);
         const nomenclature = String(age).padStart(3, "0") + "A";
-        console.log(nomenclature);
         return nomenclature;
       }
     }
   }
 
-  //funcion para filtrar los diagnosticos
-  // Constantes para las nomenclaturas
   const GENDER_MUJER = "MUJER";
   const GENDER_HOMBRE = "HOMBRE";
   const GENDER_NO = "NO";
@@ -178,14 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
       nomenclature = ageUnit;
     }
-    console.log(diagnoses, "Diagnositos");
-    console.log(
-      diagnoses.filter(
-        (diagnosis) =>
-          diagnosis.linf.slice(-1) === nomenclature ||
-          diagnosis.lsup.slice(-1) === nomenclature,
-      ),
-    );
+
     return diagnoses.filter(
       (diagnosis) =>
         diagnosis.linf.slice(-1) === nomenclature ||
@@ -200,29 +184,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Verificar si el input de fecha de nacimiento es sin asignar
     if (age === "NO" && gender === GENDER_NO) {
-      console.log(diagnoses, "NO");
       return diagnoses;
     } else if (age === "NO" && gender === GENDER_MUJER) {
-      console.log(filterDiagnosesByGender(patientData), "Mujer");
       return filterDiagnosesByGender(patientData);
     } else if (age === "NO" && gender === GENDER_HOMBRE) {
-      console.log(filterDiagnosesByGender(patientData), "Hombre");
       return filterDiagnosesByGender(patientData);
     } else if (age !== "NO" && gender === GENDER_NO) {
       // Verificar si age coincide con linf o lsup
-      console.log(filterDiagnosesByAgeRange(patientData), "Edad nomenclatura");
       const matchingDiagnoses = filterDiagnosesByAgeRange(patientData);
-
-      console.log(matchingDiagnoses, "Diagnositos con linf/lsup en H");
       return matchingDiagnoses;
     } else if (age !== "NO" && gender === GENDER_MUJER) {
       // Filtrar por género y edad
       const genderFiltered = filterDiagnosesByGender(patientData);
       const ageFiltered = filterDiagnosesByAgeRange(patientData);
-      console.log(
-        genderFiltered.filter((diagnosis) => ageFiltered.includes(diagnosis)),
-        "filtro por mujer y edad",
-      );
       return genderFiltered.filter((diagnosis) =>
         ageFiltered.includes(diagnosis),
       );
@@ -230,10 +204,6 @@ document.addEventListener("DOMContentLoaded", () => {
       // Filtrar por género y edad
       const genderFiltered = filterDiagnosesByGender(patientData);
       const ageFiltered = filterDiagnosesByAgeRange(patientData);
-      console.log(
-        genderFiltered.filter((diagnosis) => ageFiltered.includes(diagnosis)),
-        "filtro por hombre y edad",
-      );
       return genderFiltered.filter((diagnosis) =>
         ageFiltered.includes(diagnosis),
       );
