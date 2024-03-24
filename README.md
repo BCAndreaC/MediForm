@@ -13,8 +13,8 @@ La maquetación de la aplicación se realizó utilizando Figma. Puedes ver la ma
 
 [Ver maquetación en Figma]([HI - FI ](https://www.figma.com/file/Z3Xyxtb2ByAiR7EOozLZ9b/Editando_Ideas?type=design&node-id=0%3A1&mode=design&t=b6NqUCqP9o8r8FlL-1)) 
 
-![Imagen de la maquetación](![Hi-fi_mediForm](https://github.com/BCAndreaC/MediForm/assets/126895867/ebd22f34-8189-49b0-abf3-fb3128efbc52)
-) 
+![Imagen de la maquetación] ![Hi-fi_mediForm](https://github.com/BCAndreaC/MediForm/assets/126895867/9a111b46-9a75-4ccf-848c-5f180f678d8a)
+
 
 ## Pagina web del proyecto
 
