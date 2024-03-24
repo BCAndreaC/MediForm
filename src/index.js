@@ -2,10 +2,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const diagnosisInput = document.getElementById("disease");
   const suggestionsContainer = document.getElementById("suggestions");
   const suggestionsSpan = document.getElementById("numberOfSuggestions");
+  const summaryContainer = document.getElementById("summaryContainer");
+  const containerDiagnoses = document.getElementById("containerDiagnoses");
+  const articlePatientData = document.getElementById("patientArticle");
 
   let diagnoses; // Declarar la variable diagnoses
-
-  
 
   const form = document.getElementById("patientForm");
 
@@ -25,26 +26,64 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     console.log(patientData, "Datos del paciente");
     filterDiagnoses(patientData);
-    diagnosisInput.addEventListener("input", async  function () {
+    diagnosisInput.addEventListener("input", async function () {
       const userInput = this.value.toLowerCase();
       const filteredDiagnoses = await filterDiagnoses(patientData);
 
-  const matchingDiagnoses = filteredDiagnoses.filter((diagnosis) =>
-    diagnosis.nombre.toLowerCase().includes(userInput),
-  );
+      const matchingDiagnoses = filteredDiagnoses
+      .filter((diagnosis) =>
+      diagnosis.nombre.toLowerCase().includes(userInput) || diagnosis.catalog_key.toLowerCase().includes(userInput),
+    );
+      console.log(displaySuggestions(matchingDiagnoses), "Sugerencias");
       displaySuggestions(matchingDiagnoses);
     });
-  
+    displayPatientSummary(patientData);
+
+    function displayPatientSummary(patientData) {
+      summaryContainer.innerHTML = `
+      <h2>Resumen del paciente</h2>
+      <div>
+      <p>Nombre completo: ${patientData.fullName}</p>
+      <p>Fecha de nacimiento: ${patientData.dateOfBirth}</p>
+      <p>Género: ${patientData.gender}</p>
+      <p>Motivo: ${patientData.motive}</p>
+      <p>Temperatura: ${patientData.temperature}</p>
+      <p>Altura: ${patientData.height}</p>
+      <p>Peso: ${patientData.weight}</p>
+      <p>Saturación de oxígeno: ${patientData.oxygen_sat}</p>
+      <button id="resetButton">Reiniciar</button>
+      </div>
+    `;
+
+      // Ocultar el formulario y mostrar el resumen
+      articlePatientData.style.display = "none";
+      summaryContainer.style.display = "flex";
+      containerDiagnoses.style.display = "block";
+      document.getElementById("resetButton").addEventListener("click", () => {
+        // Borrar el resumen
+        summaryContainer.innerHTML = "";
+
+        // Mostrar el formulario
+        articlePatientData.style.display = "block";
+        containerDiagnoses.style.display = "none";
+
+        // Resetear el formulario
+        form.reset();
+      });
+    }
+
     function displaySuggestions(suggestions) {
       suggestionsContainer.innerHTML = "";
       suggestionsSpan.innerHTML = "";
       if (suggestions.length > 0) {
         suggestions.forEach((suggestion) => {
           const suggestionElement = document.createElement("div");
-          const numberOfSuggestions = document.getElementById("numberOfSuggestions");
+          const numberOfSuggestions = document.getElementById(
+            "numberOfSuggestions",
+          );
           numberOfSuggestions.textContent = `${suggestions.length} sugerencias`;
           suggestionElement.classList.add("suggestion-item");
-          suggestionElement.textContent = suggestion.nombre;
+          suggestionElement.textContent = suggestion.catalog_key + "-" + suggestion.nombre ;
           suggestionElement.addEventListener("click", function () {
             numberOfSuggestions.textContent = `${suggestions.length} sugerencias`;
             diagnosisInput.value = suggestion.nombre;
@@ -57,12 +96,12 @@ document.addEventListener("DOMContentLoaded", () => {
         suggestionsContainer.style.display = "none";
       }
     }
-  
+
     document.addEventListener("click", function (event) {
       if (!event.target.closest("#suggestions")) {
         suggestionsContainer.style.display = "none";
         suggestionsSpan.textContent = "";
-      } 
+      }
     });
   });
 
@@ -108,83 +147,98 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   //funcion para filtrar los diagnosticos
-// Constantes para las nomenclaturas
-const GENDER_MUJER = "MUJER";
-const GENDER_HOMBRE = "HOMBRE";
-const GENDER_NO = "NO";
+  // Constantes para las nomenclaturas
+  const GENDER_MUJER = "MUJER";
+  const GENDER_HOMBRE = "HOMBRE";
+  const GENDER_NO = "NO";
 
-// Función para filtrar diagnósticos por género
-function filterDiagnosesByGender(patientData) {
+  // Función para filtrar diagnósticos por género
+  function filterDiagnosesByGender(patientData) {
     const gender = patientData.gender;
     if (gender === GENDER_MUJER || gender === GENDER_HOMBRE) {
-        return diagnoses.filter(diagnosis => diagnosis.lsex === gender);
+      return diagnoses.filter((diagnosis) => diagnosis.lsex === gender);
     } else {
-        return diagnoses.filter(diagnosis => diagnosis.lsex === GENDER_NO);
+      return diagnoses.filter((diagnosis) => diagnosis.lsex === GENDER_NO);
     }
-}
+  }
 
-
-// Función para filtrar diagnósticos por edad y linf/lsup
-function filterDiagnosesByAgeRange(patientData) {
+  // Función para filtrar diagnósticos por edad y linf/lsup
+  function filterDiagnosesByAgeRange(patientData) {
     const age = calculateAge(patientData.dateOfBirth);
     const ageUnit = age.slice(-1);
 
     let nomenclature;
     if (age === "NO") {
-        nomenclature = "NO";
-    } else if (ageUnit === "H" || ageUnit === "D" || ageUnit === "M" || ageUnit === "A") {
-        nomenclature = ageUnit;
-    } 
-    console.log(diagnoses, "Diagnositos")
-    console.log(diagnoses.filter(diagnosis => diagnosis.linf.slice(-1) === nomenclature || diagnosis.lsup.slice(-1) === nomenclature))
-    return diagnoses.filter(diagnosis => diagnosis.linf.slice(-1) === nomenclature || diagnosis.lsup.slice(-1) === nomenclature);
-}
+      nomenclature = "NO";
+    } else if (
+      ageUnit === "H" ||
+      ageUnit === "D" ||
+      ageUnit === "M" ||
+      ageUnit === "A"
+    ) {
+      nomenclature = ageUnit;
+    }
+    console.log(diagnoses, "Diagnositos");
+    console.log(
+      diagnoses.filter(
+        (diagnosis) =>
+          diagnosis.linf.slice(-1) === nomenclature ||
+          diagnosis.lsup.slice(-1) === nomenclature,
+      ),
+    );
+    return diagnoses.filter(
+      (diagnosis) =>
+        diagnosis.linf.slice(-1) === nomenclature ||
+        diagnosis.lsup.slice(-1) === nomenclature,
+    );
+  }
 
-// Función principal de filtrado de diagnósticos
-function filterDiagnoses(patientData) {
-  const age = calculateAge(patientData.dateOfBirth);
-  const gender = patientData.gender;
+  // Función principal de filtrado de diagnósticos
+  function filterDiagnoses(patientData) {
+    const age = calculateAge(patientData.dateOfBirth);
+    const gender = patientData.gender;
 
-  // Verificar si el input de fecha de nacimiento es sin asignar
-  if (age === "NO" && gender === GENDER_NO) {
+    // Verificar si el input de fecha de nacimiento es sin asignar
+    if (age === "NO" && gender === GENDER_NO) {
       console.log(diagnoses, "NO");
       return diagnoses;
-  } else if (age === "NO" && gender === GENDER_MUJER) {
-      console.log(
-        filterDiagnosesByGender(patientData),
-          "Mujer"
-      );
+    } else if (age === "NO" && gender === GENDER_MUJER) {
+      console.log(filterDiagnosesByGender(patientData), "Mujer");
       return filterDiagnosesByGender(patientData);
-  } else if (age === "NO" && gender === GENDER_HOMBRE) {
-      console.log(
-        filterDiagnosesByGender(patientData),
-          "Hombre"
-      );
+    } else if (age === "NO" && gender === GENDER_HOMBRE) {
+      console.log(filterDiagnosesByGender(patientData), "Hombre");
       return filterDiagnosesByGender(patientData);
-  } else if (age !== "NO" && gender === GENDER_NO) {
+    } else if (age !== "NO" && gender === GENDER_NO) {
       // Verificar si age coincide con linf o lsup
-      console.log(
-        filterDiagnosesByAgeRange(patientData),
-          "Edad nomenclatura"
-      );
+      console.log(filterDiagnosesByAgeRange(patientData), "Edad nomenclatura");
       const matchingDiagnoses = filterDiagnosesByAgeRange(patientData);
 
       console.log(matchingDiagnoses, "Diagnositos con linf/lsup en H");
       return matchingDiagnoses;
-  } else if (age !== "NO" && gender === GENDER_MUJER) {
+    } else if (age !== "NO" && gender === GENDER_MUJER) {
       // Filtrar por género y edad
       const genderFiltered = filterDiagnosesByGender(patientData);
       const ageFiltered = filterDiagnosesByAgeRange(patientData);
-      console.log(genderFiltered.filter(diagnosis => ageFiltered.includes(diagnosis)), "filtro por mujer y edad")
-      return genderFiltered.filter(diagnosis => ageFiltered.includes(diagnosis));
-  } else if (age !== "NO" && gender === GENDER_HOMBRE){
+      console.log(
+        genderFiltered.filter((diagnosis) => ageFiltered.includes(diagnosis)),
+        "filtro por mujer y edad",
+      );
+      return genderFiltered.filter((diagnosis) =>
+        ageFiltered.includes(diagnosis),
+      );
+    } else if (age !== "NO" && gender === GENDER_HOMBRE) {
       // Filtrar por género y edad
       const genderFiltered = filterDiagnosesByGender(patientData);
       const ageFiltered = filterDiagnosesByAgeRange(patientData);
-      console.log(genderFiltered.filter(diagnosis => ageFiltered.includes(diagnosis)), "filtro por hombre y edad")
-      return genderFiltered.filter(diagnosis => ageFiltered.includes(diagnosis));
+      console.log(
+        genderFiltered.filter((diagnosis) => ageFiltered.includes(diagnosis)),
+        "filtro por hombre y edad",
+      );
+      return genderFiltered.filter((diagnosis) =>
+        ageFiltered.includes(diagnosis),
+      );
+    }
   }
-}
 
   function fetchApi() {
     fetch("https://api.editandoideas.com/technical-test/cat__cie_sis/")

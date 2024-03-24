@@ -13,13 +13,13 @@
     <header>
         <h1>MediForm</h1>
         <div>
-        <h2>Dra. Borges</h2>
-        <img src="/public/img/doctor_image.png" alt="female-doctor--attending---child" />
-    </div>
+            <h2>Dra. Borges</h2>
+            <img src="/public/img/doctor_image.png" alt="female-doctor--attending---child" />
+        </div>
     </header>
     <main>
         <section>
-            <article>
+            <article id="patientArticle">
                 <div class="headerDataPatient">
                     <h3>Datos del paciente</h3>
                 </div>
@@ -70,7 +70,9 @@
                     </form>
                 </div>
             </article>
-            <article>
+            
+            <article id="containerDiagnoses" class="containerDiagnoses" style="display: none">
+                <div id="summaryContainer" class="summaryContainer" style="display:none"></div>
                 <div class="headerDiagnoses">
                     <h3>Diagnosticos aplicables</h3>
                 </div>
