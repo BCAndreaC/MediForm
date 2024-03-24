@@ -1,41 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
   const diagnosisInput = document.getElementById("disease");
   const suggestionsContainer = document.getElementById("suggestions");
+  const suggestionsSpan = document.getElementById("numberOfSuggestions");
 
   let diagnoses; // Declarar la variable diagnoses
 
-  diagnosisInput.addEventListener("input",  function () {
-    const userInput = this.value.toLowerCase();
-    const matchingDiagnoses = diagnoses.filter((diagnosis) =>
-      diagnosis.nombre.toLowerCase().includes(userInput),
-    );
-    displaySuggestions(matchingDiagnoses);
-  });
-
-  function displaySuggestions(suggestions) {
-    suggestionsContainer.innerHTML = "";
-    if (suggestions.length > 0) {
-      suggestions.forEach((suggestion) => {
-        const suggestionElement = document.createElement("div");
-        suggestionElement.classList.add("suggestion-item");
-        suggestionElement.textContent = suggestion.nombre;
-        suggestionElement.addEventListener("click", function () {
-          diagnosisInput.value = suggestion.nombre;
-          suggestionsContainer.innerHTML = "";
-        });
-        suggestionsContainer.appendChild(suggestionElement);
-      });
-      suggestionsContainer.style.display = "block";
-    } else {
-      suggestionsContainer.style.display = "none";
-    }
-  }
-
-  document.addEventListener("click", function (event) {
-    if (!event.target.closest("#suggestions")) {
-      suggestionsContainer.style.display = "none";
-    }
-  });
+  
 
   const form = document.getElementById("patientForm");
 
@@ -55,6 +25,45 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     filterDiagnoses(patientData);
+    diagnosisInput.addEventListener("input", async  function () {
+      const userInput = this.value.toLowerCase();
+      const filteredDiagnoses = await filterDiagnoses(patientData);
+
+  const matchingDiagnoses = filteredDiagnoses.filter((diagnosis) =>
+    diagnosis.nombre.toLowerCase().includes(userInput),
+  );
+      displaySuggestions(matchingDiagnoses);
+    });
+  
+    function displaySuggestions(suggestions) {
+      suggestionsContainer.innerHTML = "";
+      suggestionsSpan.innerHTML = "";
+      if (suggestions.length > 0) {
+        suggestions.forEach((suggestion) => {
+          const suggestionElement = document.createElement("div");
+          const numberOfSuggestions = document.getElementById("numberOfSuggestions");
+          numberOfSuggestions.textContent = `${suggestions.length} sugerencias`;
+          suggestionElement.classList.add("suggestion-item");
+          suggestionElement.textContent = suggestion.nombre;
+          suggestionElement.addEventListener("click", function () {
+            numberOfSuggestions.textContent = `${suggestions.length} sugerencias`;
+            diagnosisInput.value = suggestion.nombre;
+            suggestionsContainer.innerHTML = "";
+          });
+          suggestionsContainer.appendChild(suggestionElement);
+        });
+        suggestionsContainer.style.display = "block";
+      } else {
+        suggestionsContainer.style.display = "none";
+      }
+    }
+  
+    document.addEventListener("click", function (event) {
+      if (!event.target.closest("#suggestions")) {
+        suggestionsContainer.style.display = "none";
+        suggestionsSpan.textContent = "";
+      } 
+    });
   });
 
   //funcion para calcular la edad y nombrarla en horas, dias, meses y años
@@ -98,44 +107,84 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function filterDiagnoses(patientData) {
-    const age = calculateAge(patientData.dateOfBirth);
+  //funcion para filtrar los diagnosticos
+// Constantes para las nomenclaturas
+const GENDER_MUJER = "MUJER";
+const GENDER_HOMBRE = "HOMBRE";
+const GENDER_NO = "NO";
+
+// Función para filtrar diagnósticos por género
+function filterDiagnosesByGender(patientData) {
     const gender = patientData.gender;
-    // verificar si el input de fecha de nacimiento es sin asignar sería un "NO"
-    if (age === "NO" && gender === "NO") {
+    if (gender === GENDER_MUJER || gender === GENDER_HOMBRE) {
+        return diagnoses.filter(diagnosis => diagnosis.lsex === gender);
+    } else {
+        return diagnoses.filter(diagnosis => diagnosis.lsex === GENDER_NO);
+    }
+}
+
+
+// Función para filtrar diagnósticos por edad y linf/lsup
+function filterDiagnosesByAgeRange(patientData) {
+    const age = calculateAge(patientData.dateOfBirth);
+    const ageUnit = age.slice(-1);
+
+    let nomenclature;
+    if (age === "NO") {
+        nomenclature = "NO";
+    } else if (ageUnit === "H" || ageUnit === "D" || ageUnit === "M" || ageUnit === "A") {
+        nomenclature = ageUnit;
+    } 
+    console.log(diagnoses, "Diagnositos")
+    console.log(diagnoses.filter(diagnosis => diagnosis.linf.slice(-1) === nomenclature || diagnosis.lsup.slice(-1) === nomenclature))
+    return diagnoses.filter(diagnosis => diagnosis.linf.slice(-1) === nomenclature || diagnosis.lsup.slice(-1) === nomenclature);
+}
+
+// Función principal de filtrado de diagnósticos
+function filterDiagnoses(patientData) {
+  const age = calculateAge(patientData.dateOfBirth);
+  const gender = patientData.gender;
+
+  // Verificar si el input de fecha de nacimiento es sin asignar
+  if (age === "NO" && gender === GENDER_NO) {
       console.log(diagnoses, "NO");
       return diagnoses;
-    } else if (age === "NO" && gender === "MUJER") {
+  } else if (age === "NO" && gender === GENDER_MUJER) {
       console.log(
-        diagnoses.filter((diagnosis) => diagnosis.lsex === "MUJER"),
-        "Mujer",
+        filterDiagnosesByGender(patientData),
+          "Mujer"
       );
-      return diagnoses.filter((diagnosis) => diagnosis.lsex === "MUJER");
-    } else if (age === "NO" && gender === "HOMBRE") {
+      return filterDiagnosesByGender(patientData);
+  } else if (age === "NO" && gender === GENDER_HOMBRE) {
       console.log(
-        diagnoses.filter((diagnosis) => diagnosis.lsex === "HOMBRE"),
-        "Hombre",
+        filterDiagnosesByGender(patientData),
+          "Hombre"
       );
-      return diagnoses.filter((diagnosis) => diagnosis.lsex === "HOMBRE");
-    } else if (age !== "NO" && gender === "NO") {
-      
-      if (
-        age.slice(-1) === "H" &&
-        diagnoses.filter((diagnosis) => diagnosis.linf === "H")
-      ) {
-        console.log(
-          diagnoses.filter((diagnosis) => diagnosis.linf.slice(-1) === "H"),
-          "Diagnositos con linf en H",
-        );
-        return diagnoses.filter((diagnosis) => diagnosis.linf === "H");
-      }
+      return filterDiagnosesByGender(patientData);
+  } else if (age !== "NO" && gender === GENDER_NO) {
+      // Verificar si age coincide con linf o lsup
+      console.log(
+        filterDiagnosesByAgeRange(patientData),
+          "Edad nomenclatura"
+      );
+      const matchingDiagnoses = filterDiagnosesByAgeRange(patientData);
 
-      console.log(
-        diagnoses.filter((diagnosis) => diagnosis.lsex === "NO"),
-        "lsex no asignado",
-      );
-    }
+      console.log(matchingDiagnoses, "Diagnositos con linf/lsup en H");
+      return matchingDiagnoses;
+  } else if (age !== "NO" && gender === GENDER_MUJER) {
+      // Filtrar por género y edad
+      const genderFiltered = filterDiagnosesByGender(patientData);
+      const ageFiltered = filterDiagnosesByAgeRange(patientData);
+      console.log(genderFiltered.filter(diagnosis => ageFiltered.includes(diagnosis)), "filtro por mujer y edad")
+      return genderFiltered.filter(diagnosis => ageFiltered.includes(diagnosis));
+  } else if (age !== "NO" && gender === GENDER_HOMBRE){
+      // Filtrar por género y edad
+      const genderFiltered = filterDiagnosesByGender(patientData);
+      const ageFiltered = filterDiagnosesByAgeRange(patientData);
+      console.log(genderFiltered.filter(diagnosis => ageFiltered.includes(diagnosis)), "filtro por hombre y edad")
+      return genderFiltered.filter(diagnosis => ageFiltered.includes(diagnosis));
   }
+}
 
   function fetchApi() {
     fetch("https://api.editandoideas.com/technical-test/cat__cie_sis/")
